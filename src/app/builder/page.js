@@ -163,37 +163,38 @@ export default function BuilderPage() {
              </div>
          </div>
 
-         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
              <div className="hidden md:flex items-center bg-muted/50 rounded-xl p-1 border">
-                <button 
-                  onClick={() => setTemplate('minimal')}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${template === 'minimal' ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                   <FileText size={16} /> Minimal
-                </button>
-                <button 
-                  onClick={() => setTemplate('modern')}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${template === 'modern' ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                   <Layout size={16} /> Modern
-                </button>
+                {['minimal', 'modern', 'classic', 'executive'].map((t) => (
+                  <button 
+                    key={t}
+                    onClick={() => setTemplate(t)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all capitalize ${template === t ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                     {t === 'minimal' && <FileText size={14} />}
+                     {t === 'modern' && <Layout size={14} />}
+                     {t === 'classic' && <FileText size={14} />}
+                     {t === 'executive' && <Layout size={14} />}
+                     {t}
+                  </button>
+                ))}
              </div>
 
              <div className="h-8 w-[1px] bg-border mx-2"></div>
 
              <button 
                onClick={handleSave}
-               className="flex items-center gap-2 rounded-xl border border-border px-5 py-2.5 font-bold hover:bg-muted transition-all active:scale-95"
+               className="flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-bold hover:bg-muted transition-all active:scale-95"
              >
-                <Save size={18} /> Save
+                <Save size={16} /> Save
              </button>
              <button 
                 onClick={handleExport}
-                className="flex items-center gap-2 rounded-xl bg-primary px-7 py-2.5 font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-hover transition-all hover:translate-y-[-2px] active:translate-y-0"
+                className="flex items-center gap-2 rounded-xl bg-primary px-6 py-2 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-hover transition-all hover:translate-y-[-2px] active:translate-y-0"
               >
-                <Download size={18} /> Export PDF
+                <Download size={16} /> Export PDF
              </button>
-         </div>
+          </div>
       </header>
 
       <main className="flex h-[calc(100vh-69px)] overflow-hidden">

@@ -71,7 +71,157 @@ export default function CVPreview({ cvData, template = 'minimal' }) {
     )
   }
 
-  // Modern Template
+  if (template === 'classic') {
+    return (
+      <div className="bg-white w-full h-full shadow-2xl p-16 min-h-[1000px] text-slate-900 leading-normal">
+        <header className="text-center mb-10 border-b-4 border-slate-900 pb-8">
+          <h1 className="text-5xl font-serif font-bold text-slate-900 mb-2">{personalInfo.name}</h1>
+          <p className="text-xl font-medium text-slate-600 mb-4">{personalInfo.title}</p>
+          <div className="flex justify-center gap-6 text-sm text-slate-500 font-medium">
+             {personalInfo.email && <span>{personalInfo.email}</span>}
+             {personalInfo.phone && <span>{personalInfo.phone}</span>}
+             {personalInfo.location && <span>{personalInfo.location}</span>}
+          </div>
+        </header>
+
+        <div className="space-y-12">
+          {personalInfo.summary && (
+            <section>
+              <h2 className="text-lg font-bold uppercase tracking-widest border-b-2 border-slate-200 mb-4 pb-1">Professional Profile</h2>
+              <p className="text-sm text-slate-700 leading-relaxed">{personalInfo.summary}</p>
+            </section>
+          )}
+
+          <section>
+            <h2 className="text-lg font-bold uppercase tracking-widest border-b-2 border-slate-200 mb-6 pb-1">Experience</h2>
+            <div className="space-y-8">
+              {experience.map((exp) => (
+                <div key={exp.id}>
+                  <div className="flex justify-between items-baseline mb-2">
+                    <h3 className="font-bold text-lg text-slate-800">{exp.title}</h3>
+                    <span className="text-sm font-bold text-slate-500">{exp.dates}</span>
+                  </div>
+                  <div className="text-sm font-bold text-primary mb-3 uppercase tracking-wide">{exp.company}</div>
+                  <p className="text-sm text-slate-600 leading-relaxed">{exp.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="grid grid-cols-2 gap-12">
+            <section>
+                <h2 className="text-lg font-bold uppercase tracking-widest border-b-2 border-slate-200 mb-6 pb-1">Education</h2>
+                <div className="space-y-6">
+                    {education.map((edu) => (
+                        <div key={edu.id}>
+                            <h3 className="font-bold text-slate-800">{edu.degree}</h3>
+                            <div className="text-sm text-slate-600 font-medium">{edu.school}</div>
+                            <div className="text-xs text-slate-400 font-bold mt-1">{edu.dates}</div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+            <section>
+                <h2 className="text-lg font-bold uppercase tracking-widest border-b-2 border-slate-200 mb-6 pb-1">Skills</h2>
+                <div className="flex flex-wrap gap-2">
+                    {skills.map((skill, index) => (
+                        <span key={index} className="bg-slate-100 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700">
+                            {skill}
+                        </span>
+                    ))}
+                </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Executive Template
+  if (template === 'executive') {
+    return (
+      <div className="bg-white w-full h-full shadow-2xl min-h-[1000px] text-zinc-800 flex flex-col">
+        <header className="bg-zinc-900 text-white p-16">
+           <h1 className="text-5xl font-black mb-4 tracking-tighter">{personalInfo.name}</h1>
+           <div className="flex items-center gap-4 text-zinc-400 font-bold uppercase tracking-widest text-xs">
+              <span className="text-white bg-zinc-700 px-3 py-1 rounded">{personalInfo.title}</span>
+              <div className="flex items-center gap-4">
+                 <span>{personalInfo.email}</span>
+                 <span>{personalInfo.phone}</span>
+              </div>
+           </div>
+        </header>
+
+        <div className="flex-1 grid grid-cols-12">
+           <aside className="col-span-4 bg-zinc-50 p-12 border-r border-zinc-200">
+              <section className="mb-12">
+                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-6">Expertise</h2>
+                 <div className="space-y-3">
+                    {skills.map((skill, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                           <div className="w-1.5 h-1.5 rounded-full bg-zinc-900"></div>
+                           <span className="text-sm font-bold text-zinc-700">{skill}</span>
+                        </div>
+                    ))}
+                 </div>
+              </section>
+
+              <section className="mb-12">
+                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-6">Education</h2>
+                 <div className="space-y-8">
+                    {education.map((edu) => (
+                        <div key={edu.id}>
+                           <div className="text-sm font-black text-zinc-900 mb-1">{edu.degree}</div>
+                           <div className="text-xs font-bold text-zinc-500">{edu.school}</div>
+                           <div className="text-[10px] text-zinc-400 mt-1">{edu.dates}</div>
+                        </div>
+                    ))}
+                 </div>
+              </section>
+
+              <section>
+                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-6">Contact Info</h2>
+                 <div className="space-y-4 text-sm font-bold text-zinc-600">
+                    <p className="flex items-center gap-2"><MapPin size={14} /> {personalInfo.location}</p>
+                    <p className="flex items-center gap-2"><Mail size={14} /> {personalInfo.email}</p>
+                 </div>
+              </section>
+           </aside>
+
+           <main className="col-span-8 p-12">
+              <section className="mb-16">
+                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-8 flex items-center gap-4">
+                    Profile <div className="h-[1px] flex-1 bg-zinc-200"></div>
+                 </h2>
+                 <p className="text-base text-zinc-600 leading-relaxed font-medium italic">"{personalInfo.summary}"</p>
+              </section>
+
+              <section>
+                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-8 flex items-center gap-4">
+                    Experience <div className="h-[1px] flex-1 bg-zinc-200"></div>
+                 </h2>
+                 <div className="space-y-12">
+                    {experience.map((exp) => (
+                        <div key={exp.id}>
+                           <div className="flex justify-between items-start mb-2">
+                              <div>
+                                 <h3 className="text-xl font-black text-zinc-900">{exp.title}</h3>
+                                 <div className="text-sm font-bold text-zinc-500 uppercase tracking-widest">{exp.company}</div>
+                              </div>
+                              <span className="bg-zinc-100 px-3 py-1 rounded text-[10px] font-black">{exp.dates}</span>
+                           </div>
+                           <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap">{exp.description}</p>
+                        </div>
+                    ))}
+                 </div>
+              </section>
+           </main>
+        </div>
+      </div>
+    )
+  }
+
+  // Modern Template (default)
   return (
     <div className="bg-white w-full h-full shadow-2xl flex min-h-[1000px] text-slate-800">
       {/* Sidebar */}
