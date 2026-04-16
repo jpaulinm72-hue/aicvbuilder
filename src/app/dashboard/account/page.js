@@ -10,7 +10,16 @@ export default function AccountPage() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [isEditingProfile, setIsEditingProfile] = useState(false)
+  const [isEditingSecurity, setIsEditingSecurity] = useState(false)
+  const [isEditingNotifications, setIsEditingNotifications] = useState(false)
+  
   const [newName, setNewName] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [notifications, setNotifications] = useState({
+    marketing: true,
+    tips: true,
+    updates: false
+  })
   const [updating, setUpdating] = useState(false)
   
   const supabase = createClient()
@@ -46,6 +55,28 @@ export default function AccountPage() {
       alert(error.message)
     }
     setUpdating(false)
+  }
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault()
+    if (newPassword.length < 6) return alert('Password must be at least 6 characters')
+    setUpdating(true)
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    })
+    
+    if (!error) {
+      setIsEditingSecurity(false)
+      setNewPassword('')
+      alert('Password updated!')
+    } else {
+      alert(error.message)
+    }
+    setUpdating(false)
+  }
+
+  const toggleNotification = (key) => {
+    setNotifications(prev => ({ ...prev, [key]: !prev[key] }))
   }
 
   if (loading) {
@@ -120,11 +151,38 @@ export default function AccountPage() {
                   label="Email Settings" 
                   desc={user?.email}
                 />
-                <SettingsLink 
-                  icon={<Shield size={18} className="text-green-500" />} 
-                  label="Security" 
-                  desc="Change password and security options"
-                />
+                
+                {isEditingSecurity ? (
+                   <form onSubmit={handleUpdatePassword} className="p-4 bg-muted/30 rounded-2xl animate-fade-in mt-1">
+                      <div className="space-y-4">
+                         <div>
+                            <label className="text-xs font-bold uppercase text-muted-foreground mb-1 block">New Password</label>
+                            <input 
+                              type="password" 
+                              value={newPassword} 
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              placeholder="••••••••"
+                              className="auth-input bg-white" 
+                            />
+                         </div>
+                         <div className="flex gap-2">
+                            <button type="submit" disabled={updating} className="flex-1 auth-button text-xs py-2">
+                               {updating ? 'Updating...' : 'Update Password'}
+                            </button>
+                            <button type="button" onClick={() => setIsEditingSecurity(false)} className="flex-1 bg-white border border-border rounded-xl text-xs font-bold hover:bg-muted transition-all">
+                               Cancel
+                            </button>
+                         </div>
+                      </div>
+                   </form>
+                ) : (
+                  <SettingsLink 
+                    onClick={() => setIsEditingSecurity(true)}
+                    icon={<Shield size={18} className="text-green-500" />} 
+                    label="Security" 
+                    desc="Change your account password"
+                  />
+                )}
              </div>
           </section>
 
@@ -137,11 +195,32 @@ export default function AccountPage() {
                   desc="Manage your pro plan and invoices"
                   href="/dashboard/subscription"
                 />
-                <SettingsLink 
-                  icon={<Bell size={18} className="text-yellow-500" />} 
-                  label="Notifications" 
-                  desc="Configure email and app alerts"
-                />
+                
+                {isEditingNotifications ? (
+                   <div className="p-4 bg-muted/30 rounded-2xl animate-fade-in mt-1">
+                      <div className="space-y-4">
+                         {Object.entries(notifications).map(([key, val]) => (
+                            <div key={key} className="flex items-center justify-between">
+                               <span className="text-xs font-bold uppercase text-muted-foreground">{key} emails</span>
+                               <button 
+                                 onClick={() => toggleNotification(key)}
+                                 className={`w-10 h-5 rounded-full transition-all relative ${val ? 'bg-primary' : 'bg-slate-300'}`}
+                               >
+                                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${val ? 'right-0.5' : 'left-0.5'}`}></div>
+                               </button>
+                            </div>
+                         ))}
+                         <button onClick={() => setIsEditingNotifications(false)} className="w-full text-[10px] font-bold text-center text-primary mt-2">Close</button>
+                      </div>
+                   </div>
+                ) : (
+                  <SettingsLink 
+                    onClick={() => setIsEditingNotifications(true)}
+                    icon={<Bell size={18} className="text-yellow-500" />} 
+                    label="Notifications" 
+                    desc="Configure email and app alerts"
+                  />
+                )}
              </div>
           </section>
 
