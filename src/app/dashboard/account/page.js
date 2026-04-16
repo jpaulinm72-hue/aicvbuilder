@@ -9,6 +9,10 @@ import { useRouter } from 'next/navigation'
 export default function AccountPage() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [updating, setUpdating] = useState(false)
+  
   const supabase = createClient()
   const router = useRouter()
 
@@ -16,6 +20,7 @@ export default function AccountPage() {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
+      setNewName(user?.user_metadata?.full_name || '')
       setLoading(false)
     }
     getUser()
@@ -24,6 +29,23 @@ export default function AccountPage() {
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.push('/')
+  }
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault()
+    setUpdating(true)
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: newName }
+    })
+    
+    if (!error) {
+      setUser(prev => ({ ...prev, user_metadata: { ...prev.user_metadata, full_name: newName } }))
+      setIsEditingProfile(false)
+      alert('Profile updated!')
+    } else {
+      alert(error.message)
+    }
+    setUpdating(false)
   }
 
   if (loading) {
@@ -47,25 +69,52 @@ export default function AccountPage() {
         <div className="grid gap-8">
           {/* Profile Section */}
           <section className="bg-white rounded-3xl border border-border overflow-hidden shadow-sm">
-             <div className="p-8 border-b border-border flex items-center gap-6">
-                <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                   <User size={40} />
-                </div>
-                <div>
-                   <h2 className="text-xl font-bold">{user?.user_metadata?.full_name || 'User'}</h2>
-                   <p className="text-muted-foreground">{user?.email}</p>
-                   <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-600 text-[10px] font-black uppercase tracking-widest rounded-full">
-                      Free Plan
-                   </span>
+             <div className="p-8 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                    <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                       <User size={40} />
+                    </div>
+                    <div>
+                       <h2 className="text-xl font-bold">{user?.user_metadata?.full_name || 'User'}</h2>
+                       <p className="text-muted-foreground">{user?.email}</p>
+                       <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-600 text-[10px] font-black uppercase tracking-widest rounded-full">
+                          Free Plan
+                       </span>
+                    </div>
                 </div>
              </div>
              
              <div className="p-4 space-y-1">
-                <SettingsLink 
-                  icon={<User size={18} className="text-blue-500" />} 
-                  label="Edit Profile" 
-                  desc="Update your name and personal details"
-                />
+                {isEditingProfile ? (
+                   <form onSubmit={handleUpdateProfile} className="p-4 bg-muted/30 rounded-2xl animate-fade-in">
+                      <div className="space-y-4">
+                         <div>
+                            <label className="text-xs font-bold uppercase text-muted-foreground mb-1 block">Full Name</label>
+                            <input 
+                              type="text" 
+                              value={newName} 
+                              onChange={(e) => setNewName(e.target.value)}
+                              className="auth-input bg-white" 
+                            />
+                         </div>
+                         <div className="flex gap-2">
+                            <button type="submit" disabled={updating} className="flex-1 auth-button text-xs py-2">
+                               {updating ? 'Saving...' : 'Save Changes'}
+                            </button>
+                            <button type="button" onClick={() => setIsEditingProfile(false)} className="flex-1 bg-white border border-border rounded-xl text-xs font-bold hover:bg-muted transition-all">
+                               Cancel
+                            </button>
+                         </div>
+                      </div>
+                   </form>
+                ) : (
+                  <SettingsLink 
+                    onClick={() => setIsEditingProfile(true)}
+                    icon={<User size={18} className="text-blue-500" />} 
+                    label="Edit Profile" 
+                    desc="Update your name and personal details"
+                  />
+                )}
                 <SettingsLink 
                   icon={<Mail size={18} className="text-purple-500" />} 
                   label="Email Settings" 
@@ -74,7 +123,7 @@ export default function AccountPage() {
                 <SettingsLink 
                   icon={<Shield size={18} className="text-green-500" />} 
                   label="Security" 
-                  desc="Password and 2FA settings"
+                  desc="Change password and security options"
                 />
              </div>
           </section>
@@ -111,9 +160,15 @@ export default function AccountPage() {
   )
 }
 
-function SettingsLink({ icon, label, desc, href = '#' }) {
+function SettingsLink({ icon, label, desc, href, onClick }) {
+  const Component = onClick ? 'button' : href ? 'a' : 'div'
+  
   return (
-    <a href={href} className="flex items-center justify-between p-4 rounded-2xl hover:bg-muted transition-all group">
+    <Component 
+      href={href} 
+      onClick={onClick}
+      className="w-full text-left flex items-center justify-between p-4 rounded-2xl hover:bg-muted transition-all group"
+    >
        <div className="flex items-center gap-4">
           <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center group-hover:bg-white transition-colors">
              {icon}
@@ -124,6 +179,6 @@ function SettingsLink({ icon, label, desc, href = '#' }) {
           </div>
        </div>
        <ChevronRight size={18} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
-    </a>
+    </Component>
   )
 }
