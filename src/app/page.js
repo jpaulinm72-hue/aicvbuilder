@@ -41,16 +41,26 @@ export default function Home() {
           
           {/* Mockup Display */}
           <div className="hero-card relative mx-auto mt-20 max-w-5xl overflow-hidden rounded-2xl border border-white/20 bg-muted/30 p-2 shadow-2xl">
-              <div className="rounded-xl border border-white/10 bg-black/40 p-1 flex items-center justify-center min-h-[400px]">
-                  <div className="text-center p-20">
-                      <div className="flex justify-center gap-4 mb-8">
-                         <div className="w-12 h-16 bg-white rounded border border-white/20 opacity-40"></div>
-                         <div className="w-16 h-20 bg-white rounded border border-white/20 opacity-60 scale-110 shadow-2xl"></div>
-                         <div className="w-12 h-16 bg-white rounded border border-white/20 opacity-40"></div>
-                      </div>
-                      <h4 className="text-white/40 font-bold uppercase tracking-widest text-xs">AI CV BUILDER PREVIEW</h4>
-                  </div>
+              <div className="rounded-xl border border-white/10 bg-black/40 overflow-hidden min-h-[400px]">
+                  <img src="/templates.png" alt="CV Templates Preview" className="w-full h-full object-cover opacity-80" />
               </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Templates Section */}
+      <section id="templates" className="py-32 px-6 bg-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl font-bold md:text-5xl">Our Professional Templates</h2>
+            <p className="mt-4 text-muted-foreground">Chosen by experts to help you land your dream job.</p>
+          </div>
+
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+            <TemplateCard title="Minimal" desc="Clean & Simple" type="minimal" />
+            <TemplateCard title="Modern" desc="Sleek Sidebar" type="modern" />
+            <TemplateCard title="Classic" desc="Traditional & Bold" type="classic" />
+            <TemplateCard title="Executive" desc="Premium Business" type="executive" />
           </div>
         </div>
       </section>
@@ -83,6 +93,54 @@ export default function Home() {
         </div>
       </section>
     </main>
+  )
+}
+
+function TemplateCard({ title, desc, type }) {
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-border bg-background p-4 transition-all hover:shadow-2xl hover:translate-y-[-10px]">
+      <div className={`aspect-[3/4] rounded-xl mb-6 flex items-center justify-center overflow-hidden border border-border transition-all group-hover:border-primary/50 ${
+        type === 'minimal' ? 'bg-zinc-50' : 
+        type === 'modern' ? 'bg-slate-100 flex-row' : 
+        type === 'classic' ? 'bg-white' : 'bg-zinc-900'
+      }`}>
+        {/* Simplified preview mockup per template type */}
+        {type === 'minimal' && (
+          <div className="w-1/2 space-y-2 opacity-20">
+            <div className="h-1 w-full bg-zinc-900 rounded"></div>
+            <div className="h-0.5 w-full bg-zinc-900 rounded"></div>
+            <div className="h-0.5 w-1/2 bg-zinc-900 rounded"></div>
+          </div>
+        )}
+        {type === 'modern' && (
+          <div className="flex w-full h-full opacity-20">
+            <div className="w-1/3 bg-slate-300 h-full"></div>
+            <div className="w-2/3 p-4 space-y-2">
+               <div className="h-1 w-full bg-slate-900 rounded"></div>
+               <div className="h-0.5 w-full bg-slate-900 rounded"></div>
+            </div>
+          </div>
+        )}
+        {type === 'classic' && (
+          <div className="w-2/3 space-y-4 opacity-20 text-center">
+            <div className="h-2 w-full bg-zinc-900 rounded"></div>
+            <div className="h-1 w-1/2 mx-auto bg-zinc-900 rounded"></div>
+            <div className="h-0.5 w-full bg-zinc-900 rounded"></div>
+          </div>
+        )}
+        {type === 'executive' && (
+          <div className="w-full h-full opacity-20 flex flex-col">
+            <div className="h-1/3 bg-white w-full"></div>
+            <div className="h-2/3 bg-zinc-700 w-full"></div>
+          </div>
+        )}
+      </div>
+      <h3 className="text-xl font-bold mb-1">{title}</h3>
+      <p className="text-muted-foreground text-sm mb-6">{desc}</p>
+      <Link href="/register" className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-primary hover:gap-3 transition-all">
+        Use Template <ArrowRight size={16} />
+      </Link>
+    </div>
   )
 }
 

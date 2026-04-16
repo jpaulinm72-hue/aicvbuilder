@@ -18,7 +18,8 @@ export function LanguageProvider({ children }) {
       getStarted: 'Get Started',
       features: 'Features',
       pricing: 'Pricing',
-      dashboard: 'Dashboard'
+      dashboard: 'Dashboard',
+      templates: 'Templates'
     },
     fr: {
       heroTitle: 'Décrochez le job de vos rêves avec',
@@ -30,7 +31,8 @@ export function LanguageProvider({ children }) {
       getStarted: 'Commencer',
       features: 'Fonctionnalités',
       pricing: 'Tarifs',
-      dashboard: 'Tableau de bord'
+      dashboard: 'Tableau de bord',
+      templates: 'Modèles'
     }
   }
 
